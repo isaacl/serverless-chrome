@@ -28,6 +28,6 @@ export function psKill (options = { command: '' }) {
   })
 }
 
-export function sleep (miliseconds = 1000) {
-  return new Promise(resolve => setTimeout(() => resolve(), miliseconds))
+export function sleep (milliseconds = 1000) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
