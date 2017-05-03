@@ -13,6 +13,7 @@ custom:
 
 plugins:
   - serverless-webpack
+  - content-handling
 
 functions:
   run:
@@ -25,3 +26,15 @@ functions:
       - http:
           path: chrome
           method: get
+          contentHandling: CONVERT_TO_BINARY
+          integration: lambda
+          request:
+            template:
+              application/json: >
+                {
+                  "url": "$input.params('url')"
+                }
+          response:
+            template: $input.path('$')
+            headers:
+              Content-Type: "'application/pdf'"

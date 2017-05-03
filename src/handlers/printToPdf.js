@@ -73,8 +73,10 @@ export async function printPdfOfUrl (url) {
 }
 
 export default (async function printPdfHandler (event) {
-  const { queryStringParameters: { url } } = event
+  const { url: encodedUrl } = event
   let pdf
+
+  const url = decodeURIComponent(encodedUrl)
 
   log('Processing screenshot capture for', url)
 
@@ -85,15 +87,20 @@ export default (async function printPdfHandler (event) {
     throw new Error('Unable to capture screenshot')
   }
 
-  return {
-    isBase64Encoded: true,
-    statusCode: 200,
-    // it's not possible to send binary via AWS API Gateway as it expects JSON response from Lambda
-    body: pdf,
-    headers: {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': "inline;filename='report.pdf'",
-      Accept: '*/*',
-    },
-  }
+  return pdf
+
+  // This style of return would be really nice but
+  // aws won't return binary unless it's requested with Accept header..
+
+  // {
+  //   isBase64Encoded: true,
+  //   statusCode: 200,
+  //   // it's not possible to send binary via AWS API Gateway as it expects JSON response from Lambda
+  //   body: pdf,
+  //   headers: {
+  //     'Content-Type': 'application/pdf',
+  //     'Content-Disposition': "inline;filename='report.pdf'",
+  //     'Content-Encoding': 'gzip',
+  //   },
+  // }
 });
